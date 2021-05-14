@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Moteur
 
 main :: IO ()
-main = someFunc
+main = etat1 >>= lance >> return ()
