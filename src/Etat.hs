@@ -5,6 +5,7 @@ import Environnement
 import Lemming
 import Niveau
 
+
 data Etat = Etat
   { envE :: Env,
     niveauE :: Niveau,
@@ -31,7 +32,7 @@ instance Show Etat where
 
 tourLemming :: Int -> Lemming -> Etat -> Etat
 tourLemming n (Mort c) (Etat envi niv r v s) = Etat (enleveEnv n envi) niv r (v -1) s
-tourLemming n (Marcheur Gauche c) et@(Etat envi niv r v s) =
+tourLemming n (Marcheur Gauche c) (Etat envi niv r v s) =
   case trouveSortie niv of
     Nothing -> suite
     Just cs -> if cs == c then Etat (enleveEnv n envi) niv r (v -1) (s + 1) else suite
@@ -40,7 +41,20 @@ tourLemming n (Marcheur Gauche c) et@(Etat envi niv r v s) =
       (True, True) -> Etat (deplaceDansEnv n (gauche c) envi) niv r v s
       (_, False) -> Etat (appliqueIdEnv n (const (Lem n (Tombeur Gauche 0 (gauche c)))) envi) niv r v s
       (_, _) -> Etat (appliqueIdEnv n (const (Lem n (Marcheur Droite c))) envi) niv r v s
-      
+tourLemming n (Marcheur Droite c) (Etat envi niv r v s) =
+  case trouveSortie niv of
+    Nothing -> suite
+    Just cs -> if cs == c then Etat (enleveEnv n envi) niv r (v -1) (s + 1) else suite
+  where
+    suite = case (passable (droite c) niv && passable (haut (droite c)) niv, dur (bas (droite c)) niv) of
+      (True, True) -> Etat (deplaceDansEnv n (droite c) envi) niv r v s
+      (_, False) -> Etat (appliqueIdEnv n (const (Lem n (Tombeur Droite 0 (droite c)))) envi) niv r v s
+      (_, _) -> Etat (appliqueIdEnv n (const (Lem n (Marcheur Gauche c))) envi) niv r v s
+tourLemming n (Tombeur dir k c) (Etat envi niv r v s) =
+  case (dur (bas c) niv, k >= hauteurMortelle) of
+    (True, True) -> Etat (appliqueIdEnv n (const (Lem n (Mort c))) envi) niv r v s
+    (True, _) -> Etat (appliqueIdEnv n (const (Lem n (Marcheur dir c))) envi) niv r v s
+    (_, _) -> Etat (appliqueIdEnv n (const $ Lem n (Tombeur dir (k + 1) (bas c))) (deplaceDansEnv n (bas c) envi)) niv r v s
 
 tourEntite :: Int -> Etat -> Etat
 tourEntite n et = case trouveIdEnv n (envE et) of

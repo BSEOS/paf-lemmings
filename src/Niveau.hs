@@ -61,8 +61,9 @@ prop_niveauFerme (Niveau h l cases) = M.foldrWithKey etape True cases
       | x == 0 || x == l - 1 || y == 0 || y == h - 1 = (c == Metal) && acc
       | otherwise = acc
 
---exempleNiveau1
---exempleNiveau2 ....
+exempleNiveau1 :: Niveau
+exempleNiveau1 = read "XXXXX\nXE  X\nX  X\nX  SX\nXXXXX"
+
 
 prop_niveauEntreeSortie :: Niveau -> Bool
 prop_niveauEntreeSortie (Niveau h l cases) = let (e, s) = M.foldrWithKey etape (0, 0) cases in e == 1 && s == 1

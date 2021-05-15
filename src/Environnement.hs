@@ -83,7 +83,7 @@ showEnv (Env h l _ cases) = let s = aux 0 (h -1) in s
     lacase x y = case M.lookup (C x y) cases of
       Nothing -> " "
       Just S.Empty -> " "
-      Just (e S.:<| es) -> show es
+      Just (e S.:<| es) -> show e
 
 caseVide :: Coordonnees -> Env -> Bool
 caseVide (C x y) (Env h l _ cases) = (x < l) && (x >= 0) && (y < h) && (y >= 0)
