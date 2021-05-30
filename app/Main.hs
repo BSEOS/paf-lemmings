@@ -1,8 +1,11 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Main where 
+module Main where
 
-import Control.Monad (unless)
+import Control.Monad ( unless, foldM )
 import Control.Concurrent (threadDelay)
+
+import Data.Map
+import qualified Data.Map as Map
 
 import Data.Set (Set)
 import qualified Data.Set as Set
@@ -30,6 +33,8 @@ import qualified SpriteMap as SM
 import Keyboard (Keyboard)
 import qualified Keyboard as K
 
+import Coordonnees
+
 import Mouse (Coordonnee, inMaybe)
 import qualified Mouse as Mo
 
@@ -37,8 +42,6 @@ import qualified Debug.Trace as T
 
 import Model (GameState)
 import qualified Model as M
-
-import Control.Monad (foldM)
 
 import Environnement
 import Etat
@@ -59,10 +62,6 @@ etat1 =
       lsauvesE = 0
     }
 
---main :: IO ()
---main = pure etat1 >>= lance >> return ()
-
---
 loadBackground :: Renderer-> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
 loadBackground rdr path tmap smap = do
   tmap' <- TM.loadTexture rdr path (TextureId "background") tmap
@@ -70,9 +69,8 @@ loadBackground rdr path tmap smap = do
   let smap' = SM.addSprite (SpriteId "background") sprite smap
   return (tmap', smap')
 
---
-loadPerso :: Renderer-> FilePath -> TextureMap -> SpriteMap -> String -> IO (TextureMap, SpriteMap)
-loadPerso rdr path tmap smap identifiant = do
+loadImage :: Renderer-> FilePath -> TextureMap -> SpriteMap -> String -> IO (TextureMap, SpriteMap)
+loadImage rdr path tmap smap identifiant = do
   tmap' <- TM.loadTexture rdr path (TextureId identifiant) tmap
   let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId identifiant) (S.mkArea 0 0 100 100)
   let smap' = SM.addSprite (SpriteId identifiant) sprite smap
@@ -85,9 +83,10 @@ main = do
   renderer <- createRenderer window (-1) defaultRenderer
   -- chargement de l'image du fond
   (tmap, smap) <- loadBackground renderer "assets/background.bmp" TM.createTextureMap SM.createSpriteMap
-  -- chargement du personnage
-  (tmap, smap) <- loadPerso renderer "assets/perso.bmp" tmap smap "perso"
-  (tmap, smap) <- loadPerso renderer "assets/virus.bmp" tmap smap "virus"
+  -- chargement des images
+  --(tmap, smap) <- loadImage renderer "assets/perso.bmp" tmap smap "perso"
+  --(tmap, smap) <- loadImage renderer "assets/virus.bmp" tmap smap "virus"
+  (tmap, smap) <- loadImage renderer "assets/terre.bmp" tmap smap "terre"
   -- initialisation de l'état du jeu
   let gameState = M.initGameState
   -- initialisation de l'état du clavier
@@ -103,27 +102,28 @@ gameLoop frameRate renderer tmap smap kbd gameState mous= do
   events <- pollEvents
   let kbd' = K.handleEvents events kbd
   let mo = Mo.handleEvents events
-  if (mo /= Nothing ) 
-    then 
-      if (M.personnageClicked (inMaybe mo) (M.gameStateToCoord  gameState)) 
-        then putStrLn $ "# Touché ! #" <> (show (inMaybe mo))
-        else  putStr ""
-    else  putStr ""
+  if mo /= Nothing && M.personnageClicked (inMaybe mo) (M.gameStateToCoord  gameState) then putStrLn $ "# Touché ! #" <> show (inMaybe mo) else putStr ""
   clear renderer
   --- display background
   S.displaySprite renderer tmap (SM.fetchSprite (SpriteId "background") smap)
   --- display perso 
-  S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId "perso") smap)
-                                 (fromIntegral (M.persoX gameState))
-                                 (fromIntegral (M.persoY gameState)))
-  S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId "virus") smap)
-                                 (fromIntegral (M.persoX gameState))
-                                 (fromIntegral (M.persoY gameState)))
+--  S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId "perso") smap)
+  --                               (fromIntegral (M.persoX gameState))
+    --                             (fromIntegral (M.persoY gameState)))
+  --S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId "virus") smap)
+   ---                              (fromIntegral (M.persoX gameState))
+     ---                            (fromIntegral (M.persoY gameState)))
+  -----------------------------
+  --display la terre
+  let (Niveau.Niveau h l map) = exempleNiveau1
+  let listTerres = Map.keys $ filterWithKey (\k v -> Just v == Just Niveau.Terre) map
+  displayImage renderer tmap smap "terre" listTerres
+  --------------------------------------
   ---
   present renderer
   endTime <- time
   let refreshTime = endTime - startTime
-  let delayTime = floor (((1.0 / frameRate) - refreshTime) * 1000)
+  let delayTime = floor ((1.0 / frameRate - refreshTime) * 1000)
   threadDelay $ delayTime * 1000 -- microseconds
   endTime <- time
   let deltaTime = endTime - startTime
@@ -132,3 +132,9 @@ gameLoop frameRate renderer tmap smap kbd gameState mous= do
   --- update du game state
   let gameState' = M.gameStep gameState kbd' deltaTime
   unless (K.keypressed KeycodeEscape kbd') (gameLoop frameRate renderer tmap smap kbd' gameState' mous)
+
+displayImage :: Renderer -> TextureMap -> SpriteMap -> String -> [Coordonnees]  -> IO ()
+displayImage renderer tmap smap id [] = return ()
+displayImage renderer tmap smap id ((C x y):as) = do
+  S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId id) smap) (fromIntegral x * 50) (fromIntegral y *50) )
+  displayImage renderer tmap smap id as
