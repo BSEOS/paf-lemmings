@@ -1,67 +1,49 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -Wno-deferred-type-errors #-}
 module Main where
-
 import Control.Monad ( unless, foldM )
 import Control.Concurrent (threadDelay)
-
 import Data.Map
 import qualified Data.Map as Map
-
 import qualified Data.Sequence as S
-
 import Data.Set (Set)
 import qualified Data.Set as Set
-
 import Data.List (foldl')
-
 import Foreign.C.Types (CInt (..) )
-
 import Data.Int (Int32)
 import qualified Data.Int as In
-
 import SDL
 import SDL.Time (time, delay)
 import Linear (V4(..))
-
 import TextureMap (TextureMap, TextureId (..))
 import qualified TextureMap as TM
-
 import Sprite (Sprite)
 import qualified Sprite as S
-
 import SpriteMap (SpriteMap, SpriteId (..))
 import qualified SpriteMap as SM
-
 import Keyboard (Keyboard)
 import qualified Keyboard as K
-
 import Coordonnees
-
 import Lemming
-
 import Mouse (Coordonnee, inMaybe)
 import qualified Mouse as Mo
-
 import qualified Debug.Trace as T
-
 import Model (GameState)
 import qualified Model as M
-
 import Environnement
 import Etat
 import Lib
 import Moteur
 import qualified Niveau
 
-exempleNiveau1 :: Niveau.Niveau
-exempleNiveau1 = read "XXXXXXXXX\nX E     X\nX       X\nX0000   X\nX       X\nX       X\nX   0000X\nX       X\nX       X\nX 000000X\nX       X\nX     S X\nXXXXXXXXX"
+mapNiveau :: String -> Niveau.Niveau
+mapNiveau = read
 
-etat1 :: Etat
-etat1 =
+etat1 :: String -> Etat
+etat1 s =
   Etat
     { envE = Environnement.envide 13 9,
-      niveauE = exempleNiveau1,
+      niveauE = mapNiveau s,
       lrestantsE = 10,
       lvivantsE = 0,
       lsauvesE = 0
@@ -83,6 +65,7 @@ loadImage rdr path tmap smap identifiant = do
 
 main :: IO ()
 main = do
+  s <- readFile "assets/Map1.txt"
   initializeAll
   window <- createWindow "Minijeu" $ defaultWindow { windowInitialSize = V2 640  520}
   renderer <- createRenderer window (-1) defaultRenderer
@@ -101,10 +84,10 @@ main = do
   -- initialisation de l'état de la souri
   let mous = Mo.createMouse
   -- lancement de la gameLoop
-  gameLoop 60 renderer tmap smap kbd gameState mous etat1
+  gameLoop 60 renderer tmap smap kbd gameState mous (etat1 s) s
 
-gameLoop :: (RealFrac a, Show a) => a -> Renderer -> TextureMap -> SpriteMap -> Keyboard -> GameState -> Coordonnee -> Etat -> IO ()
-gameLoop frameRate renderer tmap smap kbd gameState mous etat = do
+gameLoop :: (RealFrac a, Show a) => a -> Renderer -> TextureMap -> SpriteMap -> Keyboard -> GameState -> Coordonnee -> Etat -> String -> IO ()
+gameLoop frameRate renderer tmap smap kbd gameState mous etat s = do
   startTime <- time
   case tourEtat 0 etat of
     Right ne -> do
@@ -117,24 +100,20 @@ gameLoop frameRate renderer tmap smap kbd gameState mous etat = do
   --- display background
       S.displaySprite renderer tmap (SM.fetchSprite (SpriteId "background") smap)
   --display la terre
-      let (Niveau.Niveau h l map) = exempleNiveau1
+      let (Niveau.Niveau h l map) = mapNiveau s
       let listTerres = Map.keys $ filterWithKey (\k x -> Just x == Just Niveau.Terre) map
       displayImage renderer tmap smap "terre" listTerres
-  --------------------------------------
   --display metal
       let listmetaux = Map.keys $ filterWithKey (\k x -> Just x == Just Niveau.Metal ) map
       displayImage renderer tmap smap "metal" listmetaux
-  --------------------------------------
   --display porte d'entree
       let entree = Map.keys $ filterWithKey (\k x -> Just x == Just Niveau.Entree  ) map
       displayImage renderer tmap smap "porte" entree
-  --------------------------------------
     --display porte de sortie
       let sortie = Map.keys $ filterWithKey (\k x -> Just x == Just Niveau.Sortie) map
       displayImage renderer tmap smap "porte" sortie
   --------------------------------------
       let (Env h l entites cases) = envE ne
-  ---
       let lemmingsMap = filterWithKey (\k x -> not $ S.null $ S.filter verifyIfIsLemming x) cases
       afficheLemmings renderer tmap smap lemmingsMap 0 0
   ------------------------------------
@@ -145,11 +124,8 @@ gameLoop frameRate renderer tmap smap kbd gameState mous etat = do
       threadDelay $ delayTime * 1000 -- microseconds
       endTime <- time
       let deltaTime = endTime - startTime
-  -- putStrLn $ "Delta time: " <> (show (deltaTime * 1000)) <> " (ms)"
-  -- putStrLn $ "Frame rate: " <> (show (1 / deltaTime)) <> " (frame/s)"
-  --- update du game state
       let gameState' = M.gameStep gameState kbd' deltaTime
-      unless (K.keypressed KeycodeEscape kbd') (gameLoop frameRate renderer tmap smap kbd' gameState' mous ne)
+      unless (K.keypressed KeycodeEscape kbd') (gameLoop frameRate renderer tmap smap kbd' gameState' mous ne s)
 
 displayImage :: Renderer -> TextureMap -> SpriteMap -> String -> [Coordonnees]  -> IO ()
 displayImage renderer tmap smap id [] = return ()

@@ -1,12 +1,12 @@
-? C:\Users\BUYMORE\Pictures\sorbonne\paf\merge\paf-tme6-minijeu-master\.stack-work\dist\274b403a\build\minijeu-exe\autogen\Paths_minijeu.hs
-: hash: a76f2cbb51060624a37018fcdb710eb95abf50c2a84ded08f55ab457a61b2794
-C:\Users\BUYMORE\Pictures\sorbonne\paf\merge\paf-tme6-minijeu-master\app\Main.hs:
-  hash: bd19f34613889cb76a102e438d2d960d6e55883043645f79fe6efc4abc8a26a3
-C:\Users\BUYMORE\Pictures\sorbonne\paf\merge\paf-tme6-minijeu-master\README.md:
-  hash: ba0b3c5b33522c3ba20d5ca05f658f06ba4fdcf1b15d523f88e7f795903ace0d
-C:\Users\BUYMORE\Pictures\sorbonne\paf\merge\paf-tme6-minijeu-master\ChangeLog.md:
-  hash: e59d79eec98a648ef6fa74563560ca4fd1d3d93d93e6588d66daa8a3c624be96
-C:\Users\BUYMORE\Pictures\sorbonne\paf\merge\paf-tme6-minijeu-master\package.yaml:
+? C:\Users\BUYMORE\Pictures\sorbonne\paf\gihub_final\nv\oooohhh\paf-lemmings\.stack-work\dist\274b403a\build\minijeu-exe\autogen\Paths_minijeu.hs
+: hash: 3b1336ed415ccb36f63743d305181c39e7327240695e984af8562bc926317d55
+C:\Users\BUYMORE\Pictures\sorbonne\paf\gihub_final\nv\oooohhh\paf-lemmings\package.yaml:
   hash: 5ed94254c8ddbbcfe38b3de71fa26f20023c350bc91a5c1f80a05ed114b83a3f
-C:\Users\BUYMORE\Pictures\sorbonne\paf\merge\paf-tme6-minijeu-master\minijeu.cabal:
+C:\Users\BUYMORE\Pictures\sorbonne\paf\gihub_final\nv\oooohhh\paf-lemmings\README.md:
+  hash: ba0b3c5b33522c3ba20d5ca05f658f06ba4fdcf1b15d523f88e7f795903ace0d
+C:\Users\BUYMORE\Pictures\sorbonne\paf\gihub_final\nv\oooohhh\paf-lemmings\app\Main.hs:
+  hash: b505042c72835ec78baa7a377e7283c81ee7856cb0d26effb30d33f2ba411d5e
+C:\Users\BUYMORE\Pictures\sorbonne\paf\gihub_final\nv\oooohhh\paf-lemmings\minijeu.cabal:
   hash: 41623c994215a5c0148987b2759cb2c64e7d34a0c8798ebf1aef46fb3b54955c
+C:\Users\BUYMORE\Pictures\sorbonne\paf\gihub_final\nv\oooohhh\paf-lemmings\ChangeLog.md:
+  hash: e59d79eec98a648ef6fa74563560ca4fd1d3d93d93e6588d66daa8a3c624be96

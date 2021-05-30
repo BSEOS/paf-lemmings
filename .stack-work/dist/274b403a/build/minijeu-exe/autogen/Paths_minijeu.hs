@@ -29,12 +29,12 @@ version :: Version
 version = Version [0,1,0,0] []
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 
-bindir     = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\merge\\paf-tme6-minijeu-master\\.stack-work\\install\\f3920704\\bin"
-libdir     = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\merge\\paf-tme6-minijeu-master\\.stack-work\\install\\f3920704\\lib\\x86_64-windows-ghc-8.10.3\\minijeu-0.1.0.0-BAzjd17NuU78kSc2A8XRaY-minijeu-exe"
-dynlibdir  = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\merge\\paf-tme6-minijeu-master\\.stack-work\\install\\f3920704\\lib\\x86_64-windows-ghc-8.10.3"
-datadir    = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\merge\\paf-tme6-minijeu-master\\.stack-work\\install\\f3920704\\share\\x86_64-windows-ghc-8.10.3\\minijeu-0.1.0.0"
-libexecdir = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\merge\\paf-tme6-minijeu-master\\.stack-work\\install\\f3920704\\libexec\\x86_64-windows-ghc-8.10.3\\minijeu-0.1.0.0"
-sysconfdir = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\merge\\paf-tme6-minijeu-master\\.stack-work\\install\\f3920704\\etc"
+bindir     = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\gihub_final\\nv\\oooohhh\\paf-lemmings\\.stack-work\\install\\f3920704\\bin"
+libdir     = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\gihub_final\\nv\\oooohhh\\paf-lemmings\\.stack-work\\install\\f3920704\\lib\\x86_64-windows-ghc-8.10.3\\minijeu-0.1.0.0-BAzjd17NuU78kSc2A8XRaY-minijeu-exe"
+dynlibdir  = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\gihub_final\\nv\\oooohhh\\paf-lemmings\\.stack-work\\install\\f3920704\\lib\\x86_64-windows-ghc-8.10.3"
+datadir    = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\gihub_final\\nv\\oooohhh\\paf-lemmings\\.stack-work\\install\\f3920704\\share\\x86_64-windows-ghc-8.10.3\\minijeu-0.1.0.0"
+libexecdir = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\gihub_final\\nv\\oooohhh\\paf-lemmings\\.stack-work\\install\\f3920704\\libexec\\x86_64-windows-ghc-8.10.3\\minijeu-0.1.0.0"
+sysconfdir = "C:\\Users\\BUYMORE\\Pictures\\sorbonne\\paf\\gihub_final\\nv\\oooohhh\\paf-lemmings\\.stack-work\\install\\f3920704\\etc"
 
 getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: IO FilePath
 getBinDir = catchIO (getEnv "minijeu_bindir") (\_ -> return bindir)
