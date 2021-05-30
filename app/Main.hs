@@ -72,21 +72,20 @@ loadBackground rdr path tmap smap = do
 loadImage :: Renderer-> FilePath -> TextureMap -> SpriteMap -> String -> IO (TextureMap, SpriteMap)
 loadImage rdr path tmap smap identifiant = do
   tmap' <- TM.loadTexture rdr path (TextureId identifiant) tmap
-  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId identifiant) (S.mkArea 0 0 100 100)
+  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId identifiant) (S.mkArea 0 0 45 45)
   let smap' = SM.addSprite (SpriteId identifiant) sprite smap
   return (tmap', smap')
 
 main :: IO ()
 main = do
   initializeAll
-  window <- createWindow "Minijeu" $ defaultWindow { windowInitialSize = V2 640 480 }
+  window <- createWindow "Minijeu" $ defaultWindow { windowInitialSize = V2 640  520}
   renderer <- createRenderer window (-1) defaultRenderer
   -- chargement de l'image du fond
   (tmap, smap) <- loadBackground renderer "assets/background.bmp" TM.createTextureMap SM.createSpriteMap
   -- chargement des images
-  --(tmap, smap) <- loadImage renderer "assets/perso.bmp" tmap smap "perso"
-  --(tmap, smap) <- loadImage renderer "assets/virus.bmp" tmap smap "virus"
   (tmap, smap) <- loadImage renderer "assets/terre.bmp" tmap smap "terre"
+  (tmap, smap) <- loadImage renderer "assets/metal.bmp" tmap smap "metal"
   -- initialisation de l'état du jeu
   let gameState = M.initGameState
   -- initialisation de l'état du clavier
@@ -106,18 +105,14 @@ gameLoop frameRate renderer tmap smap kbd gameState mous= do
   clear renderer
   --- display background
   S.displaySprite renderer tmap (SM.fetchSprite (SpriteId "background") smap)
-  --- display perso 
---  S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId "perso") smap)
-  --                               (fromIntegral (M.persoX gameState))
-    --                             (fromIntegral (M.persoY gameState)))
-  --S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId "virus") smap)
-   ---                              (fromIntegral (M.persoX gameState))
-     ---                            (fromIntegral (M.persoY gameState)))
-  -----------------------------
   --display la terre
   let (Niveau.Niveau h l map) = exempleNiveau1
-  let listTerres = Map.keys $ filterWithKey (\k v -> Just v == Just Niveau.Terre) map
+  let listTerres = Map.keys $ filterWithKey (\k x -> Just x == Just Niveau.Terre) map
   displayImage renderer tmap smap "terre" listTerres
+  --------------------------------------
+  --display metal
+  let listmetaux = Map.keys $ filterWithKey (\k x -> Just x == Just Niveau.Metal ) map
+  displayImage renderer tmap smap "metal" listmetaux
   --------------------------------------
   ---
   present renderer
@@ -136,5 +131,5 @@ gameLoop frameRate renderer tmap smap kbd gameState mous= do
 displayImage :: Renderer -> TextureMap -> SpriteMap -> String -> [Coordonnees]  -> IO ()
 displayImage renderer tmap smap id [] = return ()
 displayImage renderer tmap smap id ((C x y):as) = do
-  S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId id) smap) (fromIntegral x * 50) (fromIntegral y *50) )
+  S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId id) smap) (fromIntegral x * 40) (fromIntegral y *40) )
   displayImage renderer tmap smap id as
