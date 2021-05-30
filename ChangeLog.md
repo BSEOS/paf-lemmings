@@ -1,3 +1,3 @@
-# Changelog for projet
+# Changelog for minijeu
 
 ## Unreleased changes

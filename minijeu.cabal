@@ -1,0 +1,87 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 71dd89f3fbadb5342f515effbdd15902e48eaa66a6a122ade3a2669be18fbf4d
+
+name:           minijeu
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/minijeu#readme>
+homepage:       https://github.com/githubuser/minijeu#readme
+bug-reports:    https://github.com/githubuser/minijeu/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2020 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/minijeu
+
+library
+  exposed-modules:
+      Coordonnees
+      Environnement
+      Etat
+      Keyboard
+      Lemming
+      Lib
+      Model
+      Moteur
+      Mouse
+      Niveau
+      Sprite
+      SpriteMap
+      TextureMap
+  other-modules:
+      Paths_minijeu
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , linear
+    , random
+    , sdl2
+    , ansi-terminal
+  default-language: Haskell2010
+
+executable minijeu-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_minijeu
+  hs-source-dirs:
+      app
+  ghc-options: -optl-mwindows -optl-mconsole -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , linear
+    , minijeu
+    , random
+    , sdl2
+  default-language: Haskell2010
+
+test-suite minijeu-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_minijeu
+  hs-source-dirs:
+      test
+  ghc-options: -optl-mwindows -optl-mconsole -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , linear
+    , minijeu
+    , random
+    , sdl2
+  default-language: Haskell2010

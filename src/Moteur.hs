@@ -3,7 +3,7 @@ module Moteur where
 import Control.Concurrent
 import Etat ( tourEtat, Etat(lrestantsE, lvivantsE), Fin )
 
-import System.Console.ANSI
+--import System.Console.ANSI
 
 tourMoteur :: Int -> Etat -> IO (Either Fin (Int, Etat))
 tourMoteur n e = case tourEtat n e of
@@ -13,7 +13,7 @@ tourMoteur n e = case tourEtat n e of
     putStrLn ("Tour " <> show n <> " restants : " <> show (lrestantsE ne) <> ", vivants : " <> show (lvivantsE ne))
     putStrLn ""
     threadDelay 500000
-    System.Console.ANSI.clearScreen
+    --System.Console.ANSI.clearScreen
     return $ Right (n + 1, ne)
 
 tourne :: Int -> Etat -> IO String
