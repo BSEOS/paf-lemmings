@@ -38,6 +38,8 @@ import qualified Debug.Trace as T
 import Model (GameState)
 import qualified Model as M
 
+import Control.Monad (foldM)
+
 import Environnement
 import Etat
 import Lib
@@ -60,7 +62,7 @@ etat1 =
 --main :: IO ()
 --main = pure etat1 >>= lance >> return ()
 
-
+--
 loadBackground :: Renderer-> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
 loadBackground rdr path tmap smap = do
   tmap' <- TM.loadTexture rdr path (TextureId "background") tmap
@@ -68,11 +70,12 @@ loadBackground rdr path tmap smap = do
   let smap' = SM.addSprite (SpriteId "background") sprite smap
   return (tmap', smap')
 
-loadPerso :: Renderer-> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
-loadPerso rdr path tmap smap = do
-  tmap' <- TM.loadTexture rdr path (TextureId "perso") tmap
-  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "perso") (S.mkArea 0 0 100 100)
-  let smap' = SM.addSprite (SpriteId "perso") sprite smap
+--
+loadPerso :: Renderer-> FilePath -> TextureMap -> SpriteMap -> String -> IO (TextureMap, SpriteMap)
+loadPerso rdr path tmap smap identifiant = do
+  tmap' <- TM.loadTexture rdr path (TextureId identifiant) tmap
+  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId identifiant) (S.mkArea 0 0 100 100)
+  let smap' = SM.addSprite (SpriteId identifiant) sprite smap
   return (tmap', smap')
 
 main :: IO ()
@@ -83,7 +86,8 @@ main = do
   -- chargement de l'image du fond
   (tmap, smap) <- loadBackground renderer "assets/background.bmp" TM.createTextureMap SM.createSpriteMap
   -- chargement du personnage
-  (tmap', smap') <- loadPerso renderer "assets/perso.bmp" tmap smap
+  (tmap, smap) <- loadPerso renderer "assets/perso.bmp" tmap smap "perso"
+  (tmap, smap) <- loadPerso renderer "assets/virus.bmp" tmap smap "virus"
   -- initialisation de l'état du jeu
   let gameState = M.initGameState
   -- initialisation de l'état du clavier
@@ -91,7 +95,7 @@ main = do
   -- initialisation de l'état de la souri
   let mous = Mo.createMouse
   -- lancement de la gameLoop
-  gameLoop 60 renderer tmap' smap' kbd gameState mous
+  gameLoop 60 renderer tmap smap kbd gameState mous
 
 gameLoop :: (RealFrac a, Show a) => a -> Renderer -> TextureMap -> SpriteMap -> Keyboard -> GameState -> Coordonnee ->IO ()
 gameLoop frameRate renderer tmap smap kbd gameState mous= do
@@ -110,6 +114,9 @@ gameLoop frameRate renderer tmap smap kbd gameState mous= do
   S.displaySprite renderer tmap (SM.fetchSprite (SpriteId "background") smap)
   --- display perso 
   S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId "perso") smap)
+                                 (fromIntegral (M.persoX gameState))
+                                 (fromIntegral (M.persoY gameState)))
+  S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId "virus") smap)
                                  (fromIntegral (M.persoX gameState))
                                  (fromIntegral (M.persoY gameState)))
   ---

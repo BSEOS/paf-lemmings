@@ -90,4 +90,3 @@ displaySprite rdr tmap sp@(Sprite imgs cur dest) =
     (Image tid src) -> do
       let txt = TM.fetchTexture tid tmap
       R.copy rdr txt Nothing (Just dest)
-
