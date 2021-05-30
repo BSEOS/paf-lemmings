@@ -1,3 +1,4 @@
+![Screenshot](screenshot.png)
 # minijeu
 
 Mini-jeu en Haskell-SDL2 à compléter.
